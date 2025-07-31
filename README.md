@@ -467,31 +467,3 @@ logging:
   file:
     name: /var/log/uic-shibboleth/application.log
 ```
-
-### Health Checks
-
-```bash
-# Check application health
-curl -k https://localhost:8443/actuator/health
-
-# Check through Apache proxy
-curl https://test.engr.uic.edu/actuator/health
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make changes and add tests
-4. Submit a pull request
-
-## License
-
-This project is licensed under the terms specified by the University of Illinois Chicago.
-
-## Support
-
-For technical support or questions:
-- Contact: UIC IT Services
-- Documentation: Internal UIC wiki
-- Issue Tracking: Internal ticketing sys
