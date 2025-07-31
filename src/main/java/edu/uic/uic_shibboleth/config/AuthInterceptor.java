@@ -33,8 +33,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         String path = request.getRequestURI();
 
         // Allow access to public paths
-        if (path.equals("/")
-                || path.equals("/login")
+        if (path.equals("/login")
                 || path.equals("/local-login")
                 || path.equals("/local-logout")
                 || path.startsWith("/css")
@@ -71,24 +70,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             Optional<User> userOpt = userRepository.findById(uid);
             if (userOpt.isEmpty()) {
                 if (autoCreateUser) {
-                    User newUser = new User();
-                    newUser.setUid(uid);
-                    newUser.setDisplayName((String) headers.get("displayname"));
-                    newUser.setEduPersonPrimaryAffiliation((String) headers.get("primary-affiliation"));
-                    newUser.setEduPersonPrincipalName((String) headers.get("eppn"));
-                    newUser.setEduPersonScopedAffiliation((String) headers.get("affiliation"));
-                    newUser.setGivenName((String) headers.get("givenname"));
-                    String suppressStr = (String) headers.get("itrustsuppress");
-                    if (suppressStr != null) {
-                        newUser.setITrustSuppress(Boolean.parseBoolean(suppressStr));
-                    }
-                    newUser.setMail((String) headers.get("mail"));
-                    newUser.setOrganizationName((String) headers.get("o"));
-                    newUser.setSurname((String) headers.get("sn"));
-                    newUser.setITrustUIN((String) headers.get("itrustuin"));
-                    newUser.setOrganizationalUnit((String) headers.get("ou"));
-                    newUser.setTitle((String) headers.get("title"));
-
+                    User newUser = createUserFromHeaders(headers);
                     userRepository.save(newUser);
                     authUser = newUser;
                 } else {
@@ -98,6 +80,9 @@ public class AuthInterceptor implements HandlerInterceptor {
                 }
             } else {
                 authUser = userOpt.get();
+                // Update existing user with latest header values
+                updateUserFromHeaders(authUser, headers);
+                userRepository.save(authUser);
             }
         }
 
@@ -105,22 +90,99 @@ public class AuthInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    private User createUserFromHeaders(Map<String, Object> headers) {
+        User user = new User();
+
+        // Core Required Attributes
+        user.setUid((String) headers.get("uid"));
+        user.setDisplayName((String) headers.get("displayName"));
+        user.setEduPersonPrimaryAffiliation((String) headers.get("eduPersonPrimaryAffiliation"));
+        user.setEduPersonPrincipalName((String) headers.get("eduPersonPrincipalName"));
+        user.setEduPersonScopedAffiliation((String) headers.get("eduPersonScopedAffiliation"));
+        user.setGivenName((String) headers.get("givenName"));
+        user.setMail((String) headers.get("mail"));
+        user.setOrganizationName((String) headers.get("organizationName"));
+        user.setSurname((String) headers.get("sn"));
+
+        // Handle boolean iTrustSuppress
+        String suppressStr = (String) headers.get("iTrustSuppress");
+        if (suppressStr != null) {
+            user.setITrustSuppress(Boolean.parseBoolean(suppressStr));
+        }
+
+        // Optional Attributes
+        user.setITrustHomeDeptCode((String) headers.get("iTrustHomeDeptCode"));
+        user.setITrustUIN((String) headers.get("iTrustUIN"));
+        user.setOrganizationalUnit((String) headers.get("organizationalUnit"));
+        user.setTitle((String) headers.get("title"));
+
+        return user;
+    }
+
+    private void updateUserFromHeaders(User user, Map<String, Object> headers) {
+        // Update all attributes with latest values from headers
+        if (headers.containsKey("displayName")) {
+            user.setDisplayName((String) headers.get("displayName"));
+        }
+        if (headers.containsKey("eduPersonPrimaryAffiliation")) {
+            user.setEduPersonPrimaryAffiliation((String) headers.get("eduPersonPrimaryAffiliation"));
+        }
+        if (headers.containsKey("eduPersonPrincipalName")) {
+            user.setEduPersonPrincipalName((String) headers.get("eduPersonPrincipalName"));
+        }
+        if (headers.containsKey("eduPersonScopedAffiliation")) {
+            user.setEduPersonScopedAffiliation((String) headers.get("eduPersonScopedAffiliation"));
+        }
+        if (headers.containsKey("givenName")) {
+            user.setGivenName((String) headers.get("givenName"));
+        }
+        if (headers.containsKey("mail")) {
+            user.setMail((String) headers.get("mail"));
+        }
+        if (headers.containsKey("organizationName")) {
+            user.setOrganizationName((String) headers.get("organizationName"));
+        }
+        if (headers.containsKey("sn")) {
+            user.setSurname((String) headers.get("sn"));
+        }
+        if (headers.containsKey("iTrustSuppress")) {
+            String suppressStr = (String) headers.get("iTrustSuppress");
+            if (suppressStr != null) {
+                user.setITrustSuppress(Boolean.parseBoolean(suppressStr));
+            }
+        }
+        if (headers.containsKey("iTrustHomeDeptCode")) {
+            user.setITrustHomeDeptCode((String) headers.get("iTrustHomeDeptCode"));
+        }
+        if (headers.containsKey("iTrustUIN")) {
+            user.setITrustUIN((String) headers.get("iTrustUIN"));
+        }
+        if (headers.containsKey("organizationalUnit")) {
+            user.setOrganizationalUnit((String) headers.get("organizationalUnit"));
+        }
+        if (headers.containsKey("title")) {
+            user.setTitle((String) headers.get("title"));
+        }
+    }
+
     private Map<String, Object> extractUserFromHeaders(HttpServletRequest request) {
         Map<String, Object> user = new HashMap<>();
 
-        mapHeader(request, "displayname", user);
-        mapHeader(request, "primary-affiliation", user);
-        mapHeader(request, "eppn", user);
-        mapHeader(request, "affiliation", user);
-        mapHeader(request, "givenname", user);
-        mapHeader(request, "itrustsuppress", user);
+        // user attributes
+        mapHeader(request, "displayName", user);
+        mapHeader(request, "eduPersonPrimaryAffiliation", user);
+        mapHeader(request, "eduPersonPrincipalName", user);
+        mapHeader(request, "eduPersonScopedAffiliation", user);
+        mapHeader(request, "givenName", user);
+        mapHeader(request, "iTrustSuppress", user);
         mapHeader(request, "mail", user);
-        mapHeader(request, "o", user);
+        mapHeader(request, "organizationName", user);
         mapHeader(request, "sn", user);
-        mapHeader(request, "itrustuin", user);
-        mapHeader(request, "ou", user);
-        mapHeader(request, "title", user);
         mapHeader(request, "uid", user);
+        mapHeader(request, "iTrustHomeDeptCode", user);
+        mapHeader(request, "iTrustUIN", user);
+        mapHeader(request, "organizationalUnit", user);
+        mapHeader(request, "title", user);
 
         return user;
     }

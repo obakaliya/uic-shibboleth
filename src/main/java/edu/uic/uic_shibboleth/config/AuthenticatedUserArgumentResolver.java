@@ -1,6 +1,5 @@
 package edu.uic.uic_shibboleth.config;
 
-
 import edu.uic.uic_shibboleth.annotation.AuthenticatedUser;
 import edu.uic.uic_shibboleth.model.User;
 import org.springframework.core.MethodParameter;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 @Component

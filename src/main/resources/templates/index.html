@@ -33,10 +33,11 @@
                         </div>
 
                         <!-- Production Shibboleth Login -->
-                        <div th:unless="${@environment.getProperty('app.auth.local-dev-mode') == 'true'}" class="d-flex justify-content-center gap-3 mb-3">
-                            <a href="/Shibboleth.sso/Login" class="btn btn-outline-secondary">
+                        <div th:unless="${@environment.getProperty('app.auth.local-dev-mode') == 'true'}" class="d-flex justify-content-center gap-3 mb-3">                            <!-- Show Login only if NOT authenticated -->
+                            <a th:if="${!authenticated}" href="/Shibboleth.sso/Login" class="btn btn-outline-secondary">
                                 Shibboleth Login
                             </a>
+                           <!-- Always show Logout -->
                             <a href="/Shibboleth.sso/Logout" class="btn btn-outline-danger">
                                 Shibboleth Logout
                             </a>
