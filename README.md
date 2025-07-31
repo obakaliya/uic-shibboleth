@@ -342,7 +342,7 @@ CREATE TABLE users (
     "surname": "Developer",
     "eduPersonPrimaryAffiliation": "faculty",
     "organizationName": "University of Illinois Chicago"
-    ...
+    // additional attributes...
   }
 }
 ```
