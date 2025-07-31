@@ -47,7 +47,6 @@ public class AuthInterceptor implements HandlerInterceptor {
         User authUser = null;
 
         if (localDevMode) {
-            // Local development mode - check session for local user
             HttpSession session = request.getSession(false);
             if (session != null) {
                 authUser = (User) session.getAttribute("localUser");
@@ -58,7 +57,6 @@ public class AuthInterceptor implements HandlerInterceptor {
                 return false;
             }
         } else {
-            // Production mode - use Shibboleth headers
             Map<String, Object> headers = extractUserFromHeaders(request);
 
             if (!headers.containsKey("uid")) {
@@ -67,6 +65,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             }
 
             String uid = (String) headers.get("uid");
+
             Optional<User> userOpt = userRepository.findById(uid);
             if (userOpt.isEmpty()) {
                 if (autoCreateUser) {
@@ -75,12 +74,12 @@ public class AuthInterceptor implements HandlerInterceptor {
                     authUser = newUser;
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "User not authorized - account not found");
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                            "User not authorized - account not found");
                     return false;
                 }
             } else {
                 authUser = userOpt.get();
-                // Update existing user with latest header values
                 updateUserFromHeaders(authUser, headers);
                 userRepository.save(authUser);
             }
@@ -93,7 +92,6 @@ public class AuthInterceptor implements HandlerInterceptor {
     private User createUserFromHeaders(Map<String, Object> headers) {
         User user = new User();
 
-        // Core Required Attributes
         user.setUid((String) headers.get("uid"));
         user.setDisplayName((String) headers.get("displayName"));
         user.setEduPersonPrimaryAffiliation((String) headers.get("eduPersonPrimaryAffiliation"));
@@ -104,13 +102,11 @@ public class AuthInterceptor implements HandlerInterceptor {
         user.setOrganizationName((String) headers.get("organizationName"));
         user.setSurname((String) headers.get("sn"));
 
-        // Handle boolean iTrustSuppress
         String suppressStr = (String) headers.get("iTrustSuppress");
         if (suppressStr != null) {
             user.setITrustSuppress(Boolean.parseBoolean(suppressStr));
         }
 
-        // Optional Attributes
         user.setITrustHomeDeptCode((String) headers.get("iTrustHomeDeptCode"));
         user.setITrustUIN((String) headers.get("iTrustUIN"));
         user.setOrganizationalUnit((String) headers.get("organizationalUnit"));
@@ -120,77 +116,69 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     private void updateUserFromHeaders(User user, Map<String, Object> headers) {
-        // Update all attributes with latest values from headers
-        if (headers.containsKey("displayName")) {
+        if (headers.containsKey("displayName"))
             user.setDisplayName((String) headers.get("displayName"));
-        }
-        if (headers.containsKey("eduPersonPrimaryAffiliation")) {
+        if (headers.containsKey("eduPersonPrimaryAffiliation"))
             user.setEduPersonPrimaryAffiliation((String) headers.get("eduPersonPrimaryAffiliation"));
-        }
-        if (headers.containsKey("eduPersonPrincipalName")) {
+        if (headers.containsKey("eduPersonPrincipalName"))
             user.setEduPersonPrincipalName((String) headers.get("eduPersonPrincipalName"));
-        }
-        if (headers.containsKey("eduPersonScopedAffiliation")) {
+        if (headers.containsKey("eduPersonScopedAffiliation"))
             user.setEduPersonScopedAffiliation((String) headers.get("eduPersonScopedAffiliation"));
-        }
-        if (headers.containsKey("givenName")) {
+        if (headers.containsKey("givenName"))
             user.setGivenName((String) headers.get("givenName"));
-        }
-        if (headers.containsKey("mail")) {
+        if (headers.containsKey("mail"))
             user.setMail((String) headers.get("mail"));
-        }
-        if (headers.containsKey("organizationName")) {
+        if (headers.containsKey("organizationName"))
             user.setOrganizationName((String) headers.get("organizationName"));
-        }
-        if (headers.containsKey("sn")) {
+        if (headers.containsKey("sn"))
             user.setSurname((String) headers.get("sn"));
-        }
         if (headers.containsKey("iTrustSuppress")) {
             String suppressStr = (String) headers.get("iTrustSuppress");
-            if (suppressStr != null) {
+            if (suppressStr != null)
                 user.setITrustSuppress(Boolean.parseBoolean(suppressStr));
-            }
         }
-        if (headers.containsKey("iTrustHomeDeptCode")) {
+        if (headers.containsKey("iTrustHomeDeptCode"))
             user.setITrustHomeDeptCode((String) headers.get("iTrustHomeDeptCode"));
-        }
-        if (headers.containsKey("iTrustUIN")) {
+        if (headers.containsKey("iTrustUIN"))
             user.setITrustUIN((String) headers.get("iTrustUIN"));
-        }
-        if (headers.containsKey("organizationalUnit")) {
+        if (headers.containsKey("organizationalUnit"))
             user.setOrganizationalUnit((String) headers.get("organizationalUnit"));
-        }
-        if (headers.containsKey("title")) {
+        if (headers.containsKey("title"))
             user.setTitle((String) headers.get("title"));
-        }
     }
 
     private Map<String, Object> extractUserFromHeaders(HttpServletRequest request) {
         Map<String, Object> user = new HashMap<>();
 
-        // user attributes
-        mapHeader(request, "displayName", user);
-        mapHeader(request, "eduPersonPrimaryAffiliation", user);
-        mapHeader(request, "eduPersonPrincipalName", user);
-        mapHeader(request, "eduPersonScopedAffiliation", user);
-        mapHeader(request, "givenName", user);
-        mapHeader(request, "iTrustSuppress", user);
-        mapHeader(request, "mail", user);
-        mapHeader(request, "organizationName", user);
-        mapHeader(request, "sn", user);
-        mapHeader(request, "uid", user);
-        mapHeader(request, "iTrustHomeDeptCode", user);
-        mapHeader(request, "iTrustUIN", user);
-        mapHeader(request, "organizationalUnit", user);
-        mapHeader(request, "title", user);
+        mapHeader(request, "displayname", "displayName", user);
+        mapHeader(request, "uid", "uid", user);
+        mapHeader(request, "mail", "mail", user);
+        mapHeader(request, "givenname", "givenName", user);
+        mapHeader(request, "sn", "sn", user);
+        mapHeader(request, "itrustuin", "iTrustUIN", user);
+        mapHeader(request, "itrustsuppress", "iTrustSuppress", user);
+        mapHeader(request, "title", "title", user);
+        mapHeaderWithAlias(request, "primary-affiliation", "eduPersonPrimaryAffiliation", user);
+        mapHeaderWithAlias(request, "affiliation", "eduPersonScopedAffiliation", user);
+        mapHeaderWithAlias(request, "eppn", "eduPersonPrincipalName", user);
+        mapHeaderWithAlias(request, "o", "organizationName", user);
+        mapHeaderWithAlias(request, "ou", "organizationalUnit", user);
 
         return user;
     }
 
-    private void mapHeader(HttpServletRequest request, String headerName, Map<String, Object> user) {
+    private void mapHeader(HttpServletRequest request, String headerName, String javaKey, Map<String, Object> user) {
         String value = request.getHeader(headerName);
         if (value != null && !value.isBlank()) {
-            user.put(headerName, value);
+            user.put(javaKey, value);
+        }
+    }
+
+    private void mapHeaderWithAlias(HttpServletRequest request, String headerName, String alias,
+                                    Map<String, Object> user) {
+        String value = request.getHeader(headerName);
+        if (value != null && !value.isBlank()) {
+            user.put(alias, value);
         }
     }
 }

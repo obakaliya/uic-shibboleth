@@ -386,6 +386,8 @@ CREATE TABLE users (
 ### 1. Build Production JAR
 ```bash
 ./mvnw clean package -DskipTests
+sudo mkdir -p /opt/uic-shibboleth
+sudo cp target/uic-shibboleth-0.0.1-SNAPSHOT.jar /opt/uic-shibboleth/uic-shibboleth.jar
 ```
 
 ### 2. Create System Service
@@ -415,12 +417,13 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload
 sudo systemctl enable uic-shibboleth
 sudo systemctl start uic-shibboleth
+sudo systemctl status uic-shibboleth
 ```
 
 ### 4. Configure Apache
 ```bash
 # Copy virtual host configuration
-sudo cp test.engr.uic.edu.conf /etc/httpd/conf.d/
+sudo vim test.engr.uic.edu.conf # write your proxy
 sudo systemctl restart httpd
 ```
 
