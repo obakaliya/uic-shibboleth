@@ -1,4 +1,4 @@
-package edu.uic.uic_shibboleth;
+package edu.uic.shibboleth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
