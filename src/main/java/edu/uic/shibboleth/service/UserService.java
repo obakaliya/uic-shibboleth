@@ -1,8 +1,9 @@
-package edu.uic.uic_shibboleth.service;
+package edu.uic.shibboleth.service;
 
-import edu.uic.uic_shibboleth.model.User;
-import edu.uic.uic_shibboleth.repository.UserRepository;
 import org.springframework.stereotype.Service;
+
+import edu.uic.shibboleth.model.User;
+import edu.uic.shibboleth.repository.UserRepository;
 
 @Service
 public class UserService {

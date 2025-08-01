@@ -1,4 +1,4 @@
-package edu.uic.uic_shibboleth.controller;
+package edu.uic.shibboleth.controller;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;

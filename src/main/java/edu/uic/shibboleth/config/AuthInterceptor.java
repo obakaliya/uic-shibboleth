@@ -1,4 +1,4 @@
-package edu.uic.uic_shibboleth.config;
+package edu.uic.shibboleth.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -6,8 +6,10 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-import edu.uic.uic_shibboleth.model.User;
-import edu.uic.uic_shibboleth.repository.UserRepository;
+
+import edu.uic.shibboleth.model.User;
+import edu.uic.shibboleth.repository.UserRepository;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -158,6 +160,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         mapHeader(request, "itrustuin", "iTrustUIN", user);
         mapHeader(request, "itrustsuppress", "iTrustSuppress", user);
         mapHeader(request, "title", "title", user);
+        mapHeader(request, "itrusthomedeptcode", "iTrustHomeDeptCode", user);
         mapHeaderWithAlias(request, "primary-affiliation", "eduPersonPrimaryAffiliation", user);
         mapHeaderWithAlias(request, "affiliation", "eduPersonScopedAffiliation", user);
         mapHeaderWithAlias(request, "eppn", "eduPersonPrincipalName", user);
@@ -175,7 +178,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     private void mapHeaderWithAlias(HttpServletRequest request, String headerName, String alias,
-                                    Map<String, Object> user) {
+            Map<String, Object> user) {
         String value = request.getHeader(headerName);
         if (value != null && !value.isBlank()) {
             user.put(alias, value);

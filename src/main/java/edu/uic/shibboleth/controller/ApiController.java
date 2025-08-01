@@ -1,10 +1,12 @@
-package edu.uic.uic_shibboleth.controller;
+package edu.uic.shibboleth.controller;
 
-import edu.uic.uic_shibboleth.annotation.AuthenticatedUser;
-import edu.uic.uic_shibboleth.model.User;
-import edu.uic.uic_shibboleth.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import edu.uic.shibboleth.annotation.AuthenticatedUser;
+import edu.uic.shibboleth.model.User;
+import edu.uic.shibboleth.service.UserService;
+
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package edu.uic.uic_shibboleth.model;
+package edu.uic.shibboleth.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

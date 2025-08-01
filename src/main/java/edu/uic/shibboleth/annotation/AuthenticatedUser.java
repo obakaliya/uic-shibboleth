@@ -1,4 +1,4 @@
-package edu.uic.uic_shibboleth.annotation;
+package edu.uic.shibboleth.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

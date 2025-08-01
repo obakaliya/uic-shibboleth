@@ -1,4 +1,4 @@
-package edu.uic.uic_shibboleth.config;
+package edu.uic.shibboleth.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

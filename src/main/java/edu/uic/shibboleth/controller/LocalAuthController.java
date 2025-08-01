@@ -1,7 +1,5 @@
-package edu.uic.uic_shibboleth.controller;
+package edu.uic.shibboleth.controller;
 
-import edu.uic.uic_shibboleth.model.User;
-import edu.uic.uic_shibboleth.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Controller;
@@ -9,6 +7,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import edu.uic.shibboleth.model.User;
+import edu.uic.shibboleth.repository.UserRepository;
+
 import java.util.Arrays;
 import java.util.List;
 

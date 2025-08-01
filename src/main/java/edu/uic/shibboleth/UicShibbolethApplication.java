@@ -1,4 +1,4 @@
-package edu.uic.uic_shibboleth;
+package edu.uic.shibboleth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
