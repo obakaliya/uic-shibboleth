@@ -22,7 +22,8 @@ A Spring Boot application that integrates with University of Illinois Chicago's 
 
 ## Overview
 
-This application provides a secure web interface that authenticates users through UIC's Shibboleth identity provider. It supports both production Shibboleth authentication and local development authentication for testing purposes.
+This application provides a secure web interface that authenticates users through  **UIC's Shibboleth identity provider (I-Trust Federation Registry
+)** ([https://itrust.illinois.edu/federationregistry/]. It supports both production Shibboleth authentication and local development authentication for testing purposes.
 
 ## Features
 
