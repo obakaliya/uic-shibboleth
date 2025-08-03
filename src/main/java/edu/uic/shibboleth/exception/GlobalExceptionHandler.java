@@ -1,27 +1,29 @@
 package edu.uic.shibboleth.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import edu.uic.shibboleth.exception.auth.UnauthenticatedException;
 import edu.uic.shibboleth.exception.auth.UnauthorizedException;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Map;
+import jakarta.servlet.http.HttpServletResponse;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnauthenticatedException.class)
-    public ResponseEntity<?> handleUnauthenticated(UnauthenticatedException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("error", "unauthenticated", "message", ex.getMessage()));
+    public String handleUnauthenticated(UnauthenticatedException ex, Model model, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); 
+        model.addAttribute("error", "Unauthenticated");
+        model.addAttribute("message", ex.getMessage());
+        return "error/401"; 
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<?> handleUnauthorized(UnauthorizedException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(Map.of("error", "unauthorized", "message", ex.getMessage()));
+    public String handleUnauthorized(UnauthorizedException ex, Model model, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN); 
+        model.addAttribute("error", "Unauthorized");
+        model.addAttribute("message", ex.getMessage());
+        return "error/403";  
     }
 }

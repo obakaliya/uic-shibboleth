@@ -46,18 +46,9 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        try {
-            User authUser = localDevMode ? getLocalDevUser(request) : authenticateFromAttributes(request);
-            request.setAttribute("authUser", authUser);
-            return true;
-        } catch (UnauthenticatedException | UnauthorizedException e) {
-            if (localDevMode) {
-                response.sendRedirect(LOGIN_URL);
-                return false;
-            } else {
-                throw e;
-            }
-        }
+        User authUser = localDevMode ? getLocalDevUser(request, response) : authenticateFromAttributes(request);
+        request.setAttribute("authUser", authUser);
+        return true;
     }
 
     private boolean isPublicPath(String path) {
@@ -71,10 +62,11 @@ public class AuthInterceptor implements HandlerInterceptor {
                 || path.startsWith("/error");
     }
 
-    private User getLocalDevUser(HttpServletRequest request) {
+    private User getLocalDevUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("localUser") == null) {
-            throw new UnauthenticatedException("User not logged in (local dev mode).");
+            response.sendRedirect(LOGIN_URL);
+            return null;
         }
         return (User) session.getAttribute("localUser");
     }
