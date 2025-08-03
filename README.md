@@ -90,6 +90,8 @@ The application uses Spring Boot's configuration system with YAML files.
 ```yaml
 app:
   auth:
+    login-url: /Shibboleth.sso/Login
+    logout-url: /Shibboleth.sso/Logout
     auto-create-user: true
     local-dev-mode: false
 
@@ -101,6 +103,9 @@ server:
     key-store-password: password
     key-store-type: PKCS12
     key-alias: tomcat
+  error:
+    whitelabel:
+      enabled: false
 ```
 
 #### Development Configuration (Profile: local)
@@ -112,6 +117,8 @@ spring:
 
 app:
   auth:
+    login-url: /login
+    logout-url: /logout
     auto-create-user: true
     local-dev-mode: true
 
@@ -386,7 +393,11 @@ CREATE TABLE users (
 ### 1. Build Production JAR
 ```bash
 ./mvnw clean package -DskipTests
+
+# create new dir
 sudo mkdir -p /opt/uic-shibboleth
+
+# copy the jar 
 sudo cp target/uic-shibboleth-0.0.1-SNAPSHOT.jar /opt/uic-shibboleth/uic-shibboleth.jar
 ```
 
@@ -423,7 +434,7 @@ sudo systemctl status uic-shibboleth
 ### 4. Configure Apache
 ```bash
 # Copy virtual host configuration
-sudo vim test.engr.uic.edu.conf # write your proxy
+sudo vim test.engr.uic.edu.conf # write your proxy configurations
 sudo systemctl restart httpd
 ```
 
@@ -464,9 +475,10 @@ sudo systemctl restart httpd
 ```yaml
 logging:
   level:
-    edu.uic.uic_shibboleth: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
+    org.springframework.security: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   file:
-    name: /var/log/uic-shibboleth/application.log
+    name: logs/uic-shibboleth.log
 ```

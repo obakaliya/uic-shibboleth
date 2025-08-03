@@ -1,4 +1,4 @@
-package edu.uic.shibboleth.controller;
+package edu.uic.shibboleth.controller.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import edu.uic.shibboleth.annotation.AuthenticatedUser;
 import edu.uic.shibboleth.model.User;
 
-@Controller
-public class WebController {
+@Controller("UserWebController")
+public class UserController {
 
     @GetMapping("/")
     public String home(@AuthenticatedUser User user, Model model) {
