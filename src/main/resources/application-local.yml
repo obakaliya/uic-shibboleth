@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+app:
+  auth:
+    login-url: /login
+    logout-url: /logout
+    auto-create-user: true
+    local-dev-mode: true
+
+server:
+  port: 8080
+  ssl:
+    enabled: false
