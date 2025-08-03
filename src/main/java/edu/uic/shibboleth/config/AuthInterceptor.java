@@ -27,14 +27,14 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Value("${app.auth.local-dev-mode:false}")
     private boolean localDevMode;
-    
+
     @Value("${app.auth.login-url:/Shibboleth.sso/Login}")
     private String LOGIN_URL;
 
     public AuthInterceptor(UserRepository userRepository, UserMapper headerUserMapper, UserService userService) {
         this.userRepository = userRepository;
         this.headerUserMapper = headerUserMapper;
-        this.userService = userService; 
+        this.userService = userService;
     }
 
     @Override
@@ -51,8 +51,12 @@ public class AuthInterceptor implements HandlerInterceptor {
             request.setAttribute("authUser", authUser);
             return true;
         } catch (UnauthenticatedException | UnauthorizedException e) {
-            response.sendRedirect(LOGIN_URL);
-            return false;
+            if (localDevMode) {
+                response.sendRedirect(LOGIN_URL);
+                return false;
+            } else {
+                throw e;
+            }
         }
     }
 
